@@ -73,17 +73,26 @@ const functions = {
      */
     
     async insertRow(table, data) {
+        console.log('Datos recibidos en insertRow:', data);
+    
+        if (!data || typeof data !== 'object') {
+            console.error('Error: Los datos proporcionados a insertRow son inválidos:', data);
+            throw new Error('Los datos proporcionados a insertRow son inválidos.');
+        }
+    
         const keys = Object.keys(data);
         const placeholders = keys.map(() => '?').join(', ');
         const values = keys.map(key => data[key]);
+    
         try {
             const [result] = await sql.query(`INSERT INTO ${table} (${keys.join(', ')}) VALUES (${placeholders})`, values);
             return result;
         } catch (error) {
-            console.error('Error executing query:', error);
-            return { affectedRows: 0 };
+            console.error('Error ejecutando la consulta:', error);
+            throw error;
         }
     },
+    
 
     async deleteRow(table, selector) {
         const [result] = await sql.query(`DELETE FROM ${table} WHERE ?`, [selector]);

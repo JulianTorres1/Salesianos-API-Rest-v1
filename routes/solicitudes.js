@@ -31,19 +31,29 @@ router.put('/update', async (req, res) => {
 });
 
 // Ruta para crear una nueva solicitud
-
 router.post('/create', async (req, res) => {
-    const { data } = req.body; // Asegúrate de enviar los datos de la nueva solicitud en el cuerpo de la solicitud
     try {
-        console.log('Creating new row in Solicitudes table...');
-        const result = await sql.functions.createRow('Solicitudes', data);
-        console.log('Create result:', result); // Log para verificar el resultado de la creación
-        res.json(result);
+        console.log('Request body recibido:', req.body); // Log para verificar `req.body`
+        const data = req.body;
+
+        // Validar que `data` no sea null, undefined o vacío
+        if (!data || typeof data !== 'object' || Object.keys(data).length === 0) {
+            console.error('Error: El cuerpo de la solicitud está vacío o no es válido:', data);
+            return res.status(400).json({ error: 'El cuerpo de la solicitud está vacío o no es válido.' });
+        }
+
+        console.log('Datos validados para insertar:', data); // Log para verificar `data`
+
+        const result = await sql.functions.insertRow('Solicitudes', data);
+        console.log('Resultado de la inserción:', result); // Log para verificar el resultado
+
+        res.status(201).json({ message: 'Solicitud creada exitosamente', result });
     } catch (err) {
-        console.error('Error creating row:', err); // Log para verificar el error
-        res.status(500).send(err);
+        console.error('Error creando la fila:', err);
+        res.status(500).json({ error: err.message || 'Error interno del servidor' });
     }
 });
+
 
 // Ruta para eliminar una solicitud
 router.delete('/delete/:id', async (req, res) => {
