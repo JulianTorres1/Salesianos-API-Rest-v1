@@ -2,13 +2,17 @@ const express = require('express');
 const router = express.Router();
 const sql = require('../db/mysql');
 
+function getDateTime() {
+    const date = new Date();
+    return date.toISOString().slice(0, 19).replace('T', ' ');
+}
 
 // Ruta para obtener todas las solicitudes
 router.get('/get', async (req, res) => {
     try {
         console.log('Fetching rows from Solicitudes table...');
         const results = await sql.functions.getRows('Solicitudes');
-        console.log('Results:', results); // Log para verificar los resultados
+        console.log('Results get at:', Date() ); // Log para verificar los resultados
         res.json(results);
     } catch (err) {
         console.error('Error fetching rows:', err); // Log para verificar el error
@@ -69,5 +73,32 @@ router.delete('/delete/:id', async (req, res) => {
     }
 });
 
+//Ruta para obtener una solicitud por ID
+router.get('/get/:id', async (req, res) => {
+    const { id } = req.params; // Obtener el ID de los parámetros de la ruta
+    try {
+        console.log(`Fetching row from Solicitudes table with ID: ${id}`);
+        const result = await sql.functions.getRow('Solicitudes', { id });
+        console.log('Result get at:', Date() ); // Log para verificar los resultados
+        res.json(result);
+    } catch (err) {
+        console.error('Error fetching row:', err); // Log para verificar el error
+        res.status(500).send(err);
+    }
+});
+
+// Rua para obtenr solicitudes en base a una fecha
+router.get('/getByDate/:date', async (req, res) => {
+    const { date } = req.params; // Obtener el ID de los parámetros de la ruta
+    try {
+        console.log(`Fetching row from Solicitudes table with date: ${date}`);
+        const result = await sql.functions.getRowsByDate('Solicitudes', date);
+        console.log('Result get at:', Date() ); // Log para verificar los resultados
+        res.json(result);
+    } catch (err) {
+        console.error('Error fetching row:', err); // Log para verificar el error
+        res.status(500).send(err);
+    }
+});
 
 module.exports = router;

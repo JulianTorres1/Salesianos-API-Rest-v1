@@ -49,6 +49,11 @@ const functions = {
         return rows[0];
     },
 
+    // obtener una fila en base a la fecha
+    async getRowsByDate(table, date) {
+        const [rows] = await sql.query(`SELECT * FROM ${table} WHERE fecha_evento = ?`, date);
+        return rows;
+    },
     /**
      * Update a row in a specified table using a selector.
      * @param {string} table - The name of the table to update.

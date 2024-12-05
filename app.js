@@ -9,6 +9,7 @@ const logRoutes = require('./routes/log');
 const validationRoutes = require('./routes/validation');
 const routes = require('./routes');
 const solicitudes = require('./routes/solicitudes');
+const User = require('./routes/users');
 
 // Middlewares import
 const authenticate = require('./middlewares/authenticate');
@@ -65,6 +66,7 @@ app.use('/api', authenticate, routes); // '/api' routes are protected with the '
 app.use('/log', logRoutes);
 app.use('/validation', validationRoutes);
 app.use('/solicitudes', solicitudes);
+app.use('/users', User);
 
 // Root routes
 // curl -X GET http://localhost:5005/welcome
